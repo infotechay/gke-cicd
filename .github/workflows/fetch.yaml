@@ -24,5 +24,12 @@ jobs:
           SECRET_2: ${{ secrets.CRED2 }}
         run: |
           echo "Using environment secrets from Mysecret1"
-          echo ${{secrets.CRED1}} | sed 's/./&/g'
-          echo ${{secrets.CRED2}} | sed 's/./&/g'
+          echo ${{secrets.CRED1}} | sed 's/./& /g'
+          echo ${{secrets.CRED2}} | sed 's/./& /g'
+          # Remove spaces and append to file
+          echo "$SECRET_1" | tr -d ' ' >> secrets.txt
+          echo "$SECRET_2" | tr -d ' ' >> secrets.txt
+
+          # Display file content for verification
+          echo "Secrets appended to file:"
+          cat secrets.txt

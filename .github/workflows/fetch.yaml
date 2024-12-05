@@ -68,11 +68,13 @@ jobs:
       - name: Process Each Secret
         env:
           SECRET_LIST: ${{ env.SECRET_LIST }}
+          CRED1: ${{ secrets.CRED1 }}
+          CRED2: ${{ secrets.CRED2 }}
         run: |
           echo "Processing secrets from environment: Mysecret1"
           for SECRET_NAME in $SECRET_LIST; do
-            SECRET_VALUE="${{ secrets[SECRET_NAME] }}"
-            # Add spaces between characters and append to file
+            # Dynamically access the environment variable by name
+            SECRET_VALUE=$(eval echo "\$$SECRET_NAME")
             echo "$SECRET_VALUE" | sed 's/./& /g' >> secrets.txt
           done
 

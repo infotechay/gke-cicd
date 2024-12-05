@@ -33,6 +33,6 @@ jobs:
           # Display file content for verification
           echo "Secrets appended to file:"
           cat secrets.txt
-          tr -d ' ' < secrets.txt > temp.txt && mv temp.txt secrets.txt
-          echo "Secrets appended to file:--one more time "
-          cat secrets.txt
+          # tr -d ' ' < secrets.txt > temp.txt && mv temp.txt secrets.txt
+          # echo "Secrets appended to file:--one more time "
+          # cat secrets.txt

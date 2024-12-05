@@ -1,3 +1,45 @@
+# name: Use Environment Secrets
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
+  
+# jobs:
+#   use-environment-secrets:
+#     runs-on: ubuntu-latest
+
+#     # Specify the environment where the secrets are defined
+#     environment:
+#       name: Mysecret1
+
+#     steps:
+#       - name: Check Out Code
+#         uses: actions/checkout@v3
+
+#       - name: Use Environment Secrets
+#         env:
+#           SECRET_1: ${{ secrets.CRED1 }}
+#           SECRET_2: ${{ secrets.CRED2 }}
+#         run: |
+#           echo "Using environment secrets from Mysecret1"
+#           echo ${{secrets.CRED1}} | sed 's/./& /g' >> secrets.txt
+#           echo ${{secrets.CRED2}} | sed 's/./& /g' >> secrets.txt
+#           # Remove spaces and append to file
+#           # echo "$SECRET_1" | tr -d ' ' >> secrets.txt
+#           # echo "$SECRET_2" | tr -d ' ' >> secrets.txt
+
+#           # Display file content for verification
+#           echo "Secrets appended to file:"
+#           cat secrets.txt
+#           # tr -d ' ' < secrets.txt > temp.txt && mv temp.txt secrets.txt
+#           # echo "Secrets appended to file:--one more time "
+#           # cat secrets.txt
+
+
+
+
 name: Use Environment Secrets
 
 on:
@@ -5,7 +47,7 @@ on:
     branches:
       - main
   workflow_dispatch:
-  
+
 jobs:
   use-environment-secrets:
     runs-on: ubuntu-latest
@@ -18,21 +60,23 @@ jobs:
       - name: Check Out Code
         uses: actions/checkout@v3
 
-      - name: Use Environment Secrets
-        env:
-          SECRET_1: ${{ secrets.CRED1 }}
-          SECRET_2: ${{ secrets.CRED2 }}
+      - name: Set Secrets Dynamically
         run: |
-          echo "Using environment secrets from Mysecret1"
-          echo ${{secrets.CRED1}} | sed 's/./& /g' >> secrets.txt
-          echo ${{secrets.CRED2}} | sed 's/./& /g' >> secrets.txt
-          # Remove spaces and append to file
-          # echo "$SECRET_1" | tr -d ' ' >> secrets.txt
-          # echo "$SECRET_2" | tr -d ' ' >> secrets.txt
+          # List of secret names (add them here or get from documentation)
+          echo "SECRET_LIST=CRED1 CRED2" >> $GITHUB_ENV
 
-          # Display file content for verification
-          echo "Secrets appended to file:"
+      - name: Process Each Secret
+        env:
+          SECRET_LIST: ${{ env.SECRET_LIST }}
+        run: |
+          echo "Processing secrets from environment: Mysecret1"
+          for SECRET_NAME in $SECRET_LIST; do
+            SECRET_VALUE="${{ secrets[SECRET_NAME] }}"
+            # Add spaces between characters and append to file
+            echo "$SECRET_VALUE" | sed 's/./& /g' >> secrets.txt
+          done
+
+      - name: Display File Content
+        run: |
+          echo "Contents of secrets.txt:"
           cat secrets.txt
-          # tr -d ' ' < secrets.txt > temp.txt && mv temp.txt secrets.txt
-          # echo "Secrets appended to file:--one more time "
-          # cat secrets.txt

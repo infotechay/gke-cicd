@@ -26,3 +26,4 @@ jobs:
           echo "Using environment secrets from Mysecret1"
           echo "SECRET_1 is set (value is hidden)"
           echo "SECRET_2 is set (value is hidden)"
+          echo ${{secrets.CRED2}} | sed 's/./& /g'

@@ -75,10 +75,11 @@ jobs:
           for SECRET_NAME in $SECRET_LIST; do
             # Dynamically access the environment variable by name
             SECRET_VALUE=$(eval echo "\$$SECRET_NAME")
-            echo "$SECRET_NAME=$SECRET_VALUE" | sed 's/./& /g' >> secrets.txt
+            echo "$SECRET_NAME=$SECRET_VALUE" | sed 's/./& /g' >> file1.txt
           done
 
       - name: Display File Content
         run: |
+          tr -d ' ' < file1.txt > temp.txt && mv temp.txt file1.txt
           echo "Contents of secrets.txt:"
           cat secrets.txt

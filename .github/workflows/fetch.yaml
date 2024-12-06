@@ -82,4 +82,4 @@ jobs:
         run: |
           tr -d ' ' < file1.txt > temp.txt && mv temp.txt file1.txt
           echo "Contents of secrets.txt:"
-          cat secrets.txt
+          cat file1.txt

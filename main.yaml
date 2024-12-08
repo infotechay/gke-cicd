@@ -1,9 +1,8 @@
-# provider
+# Provider
 provider "github" {
   token = var.github_token
   owner = var.github_owner
-  
-  }
+}
 
 # Read the content of the secrets file
 data "local_file" "secrets_file" {
@@ -15,7 +14,7 @@ locals {
   secrets = {
     for line in split("\n", data.local_file.secrets_file.content) :
     trimspace(split("=", line)[0]) => trimspace(split("=", line)[1])
-    if length(trimspace(line)) > 0
+    if length(trimspace(line)) > 0 && contains(line, "=")
   }
 }
 
@@ -23,9 +22,8 @@ locals {
 resource "github_actions_environment_secret" "secret" {
   for_each = local.secrets
 
-  repository     = var.target_repository
-  environment    = var.target_environment
-  secret_name    = each.key
+  repository      = var.target_repository
+  environment     = var.target_environment
+  secret_name     = each.key 
   plaintext_value = each.value
-
 }

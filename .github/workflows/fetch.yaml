@@ -94,11 +94,7 @@ jobs:
 
       - name: Plan Terraform Changes
         run: |
-          terraform plan \
-            -var="github_token=${{ secrets.GITHUB_TOKEN }}" \
-            -var="github_owner=${{ secrets.GITHUB_OWNER }}" \
-            -var="target_repository=vprfile_dev" \
-            -var="target_environment=newsecrets"
+          terraform plan -var="github_token=${{ secrets.GITHUB_TOKEN }}" -var="github_owner=${{ secrets.GITHUB_OWNER }}" -var="target_repository=vprfile_dev" -var="target_environment=newsecrets"
 
 
       - name: Apply Terraform Changes

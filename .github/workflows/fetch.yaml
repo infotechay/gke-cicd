@@ -92,5 +92,23 @@ jobs:
       - name: Initialize Terraform
         run: terraform init
 
-      - name: Apply Terraform Configuration
-        run: terraform apply -auto-approve
+      - name: Plan Terraform Changes
+        run: |
+          terraform plan \
+            -var="github_token=${{ secrets.GITHUB_TOKEN }}" \
+            -var="github_owner=${{ secrets.GITHUB_OWNER }}" \
+            -var="target_repository=vprfile_dev" \
+            -var="target_environment=newsecrets"
+
+
+      - name: Apply Terraform Changes
+        env:
+          TF_VAR_github_token: ${{ secrets.GITHUB_TOKEN }}
+          # TF_VAR_github_owner: ${{ secrets.GITHUB_OWNER }}
+          TF_VAR_github_owner: infotechay
+          # TF_VAR_target_repository: ${{ secrets.TARGET_REPOSITORY }}
+          # TF_VAR_target_environment: ${{ secrets.TARGET_ENVIRONMENT }}
+          TF_VAR_target_repository: vprfile_dev
+          TF_VAR_target_environment: newsecrets
+        run: |
+          terraform apply -auto-approve

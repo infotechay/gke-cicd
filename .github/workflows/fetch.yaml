@@ -94,7 +94,7 @@ jobs:
 
       - name: Plan Terraform Changes
         run: |
-          terraform plan \
+          terraform plan ../../ \
             -var="github_token=${{ secrets.GITHUB_TOKEN }}" \
             -var="github_owner=${{ secrets.GITHUB_OWNER }}" \
             -var="target_repository=vprfile_dev" \
@@ -111,4 +111,4 @@ jobs:
           TF_VAR_target_repository: vprfile_dev
           TF_VAR_target_environment: newsecrets
         run: |
-          terraform apply -auto-approve
+          terraform apply ../../ -auto-approve

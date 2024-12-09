@@ -16,7 +16,8 @@ jobs:
         id: list_environments
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
+          # REPO: ${{ github.repository }}
+          REPO: vprfile_dev
         run: |
           echo "Fetching all environments for repository: $REPO"
           ENVIRONMENTS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
@@ -28,7 +29,8 @@ jobs:
       - name: List Secrets for Each Environment
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
+          # REPO: ${{ github.repository }}
+          REPO: vprfile_dev
         run: |
           echo "Fetching secrets for each environment in repository: $REPO"
           for ENVIRONMENT in ${{ steps.list_environments.outputs.environments }}

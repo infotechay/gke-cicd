@@ -1,0 +1,40 @@
+name: List Environments and Their Secrets
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  list-environments:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: List All Environments
+        id: list_environments
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Fetching all environments for repository: $REPO"
+          ENVIRONMENTS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+                            -H "Accept: application/vnd.github.v3+json" \
+                            "https://api.github.com/repos/infotechay/$REPO/environments" | jq -r '.environments[].name')
+          echo "Environments: $ENVIRONMENTS"
+          echo "::set-output name=environments::$ENVIRONMENTS"
+
+      - name: List Secrets for Each Environment
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Fetching secrets for each environment in repository: $REPO"
+          for ENVIRONMENT in ${{ steps.list_environments.outputs.environments }}
+          do
+            echo "Environment: $ENVIRONMENT"
+            curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+                 -H "Accept: application/vnd.github.v3+json" \
+                 "https://api.github.com/repos/$REPO/environments/$ENVIRONMENT/secrets" | jq .
+          done

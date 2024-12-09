@@ -117,7 +117,7 @@ name: Use and Update Environment Secrets
 on:
   push:
     branches:
-      - main
+      - main1
   workflow_dispatch:
 
 jobs:

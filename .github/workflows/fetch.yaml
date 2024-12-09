@@ -162,6 +162,12 @@ jobs:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       #   run: gh auth login --with-token <<< "${GITHUB_TOKEN}"
 
+  use-environment-secrets:
+    runs-on: ubuntu-latest
+    environment:
+      name: Mysecret1
+    
+    steps:
       - name: Update Secrets in Target Repository
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

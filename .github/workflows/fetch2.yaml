@@ -24,7 +24,7 @@ jobs:
                             -H "Accept: application/vnd.github.v3+json" \
                             "https://api.github.com/repos/infotechay/$REPO/environments" | jq -r '.environments[].name')
           echo "Environments: $ENVIRONMENTS"
-          echo "::set-output name=environments::$ENVIRONMENTS"
+   #        echo "::set-output name=environments::$ENVIRONMENTS"
 
       - name: List Secrets for Each Environment
         env:

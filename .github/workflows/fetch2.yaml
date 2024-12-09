@@ -2,7 +2,7 @@ name: List Environments and Their Secrets
 on:
   push:
     branches:
-      - main
+      - main13
   workflow_dispatch: # Allows manual triggering
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
           ENVIRONMENTS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
                             -H "Accept: application/vnd.github.v3+json" \
                             "https://api.github.com/repos/infotechay/$REPO/environments" ) 
-                            
+
           echo "Environments: $ENVIRONMENTS"
    #        echo "::set-output name=environments::$ENVIRONMENTS"
 

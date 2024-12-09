@@ -107,4 +107,6 @@ jobs:
           TF_VAR_target_repository: vprfile_dev
           TF_VAR_target_environment: newsecrets
         run: |
+          pwd
+          ls -lrth
           terraform apply -auto-approve

@@ -162,20 +162,20 @@ jobs:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       #   run: gh auth login --with-token <<< "${GITHUB_TOKEN}"
 
-  use-environment-secrets:
-    runs-on: ubuntu-latest
-    environment:
-      name: Mysecret1
+  # use-environment-secrets:
+  #   runs-on: ubuntu-latest
+  #   environment:
+  #     name: Mysecret1
     
-    steps:
-      - name: Update Secrets in Target Repository
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "Updating secrets in the target repository"
-          while IFS='=' read -r SECRET_NAME SECRET_VALUE; do
-            if [[ -n "$SECRET_NAME" && -n "$SECRET_VALUE" ]]; then
-              echo "Setting $SECRET_NAME in the target repository"
-              gh secret set "$SECRET_NAME" --body "$SECRET_VALUE" --repo infotechay/vprfile_dev --env newsecrets
-            fi
-          done < secrets.txt
+  #   steps:
+  #     - name: Update Secrets in Target Repository
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         echo "Updating secrets in the target repository"
+  #         while IFS='=' read -r SECRET_NAME SECRET_VALUE; do
+  #           if [[ -n "$SECRET_NAME" && -n "$SECRET_VALUE" ]]; then
+  #             echo "Setting $SECRET_NAME in the target repository"
+  #             gh secret set "$SECRET_NAME" --body "$SECRET_VALUE" --repo infotechay/vprfile_dev --env newsecrets
+  #           fi
+  #         done < secrets.txt

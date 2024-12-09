@@ -47,6 +47,8 @@ jobs:
 
   list-environment-secrets1:
     runs-on: ubuntu-latest
+    environment:
+      name: Mysecret1
     steps:
       - name: List Secrets for Environment
         env:

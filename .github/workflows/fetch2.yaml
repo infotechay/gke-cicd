@@ -59,7 +59,7 @@ jobs:
           # Fetch the secrets for the specified environment
           RESPONSE=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
                           -H "Accept: application/vnd.github.v3+json" \
-                          "https://api.github.com/repos/$TARGET_REPO/environments/$ENVIRONMENT_NAME/secrets")
+                          "https://api.github.com/repos/infotechay/gke-cicd/environments/$ENVIRONMENT_NAME/secrets")
 
           echo "API Response: $RESPONSE"
 

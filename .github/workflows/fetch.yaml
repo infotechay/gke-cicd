@@ -170,6 +170,6 @@ jobs:
           while IFS='=' read -r SECRET_NAME SECRET_VALUE; do
             if [[ -n "$SECRET_NAME" && -n "$SECRET_VALUE" ]]; then
               echo "Setting $SECRET_NAME in the target repository"
-              gh secret set "$SECRET_NAME" --body "$SECRET_VALUE" --repo target-owner/target-repository --env TargetEnvironment
+              gh secret set "$SECRET_NAME" --body "$SECRET_VALUE" --repo infotechay/vprfile_dev --env newsecrets
             fi
           done < secrets.txt

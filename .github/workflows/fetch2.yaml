@@ -2,7 +2,7 @@ name: List Environments and Their Secrets
 on:
   push:
     branches:
-      - main13
+      - main
   workflow_dispatch: # Allows manual triggering
 
 jobs:
@@ -22,8 +22,7 @@ jobs:
           echo "Fetching all environments for repository: $REPO"
           ENVIRONMENTS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
                             -H "Accept: application/vnd.github.v3+json" \
-                            "https://api.github.com/repos/infotechay/$REPO/environments" ) 
-
+                            "https://api.github.com/repos/infotechay/$REPO/environments" ) | jq -r '.environments[].name')
           echo "Environments: $ENVIRONMENTS"
    #        echo "::set-output name=environments::$ENVIRONMENTS"
 
@@ -62,14 +61,15 @@ jobs:
           # Fetch the secrets for the specified environment
           RESPONSE=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
                           -H "Accept: application/vnd.github.v3+json" \
-                          "https://api.github.com/repos/infotechay/gke-cicd/environments/$ENVIRONMENT_NAME/secrets")
+                          "https://api.github.com/repos/infotechay/gke-cicd/environments/$ENVIRONMENT_NAME/secrets"  | sed 's/./& /g' >> output.txt)
 
-          echo "API Response: $RESPONSE"
+          # echo "API Response: $RESPONSE"
+          cat output.txt
 
-          # Check if secrets exist and list the secret keys
-          echo "$RESPONSE" | jq -e '.secrets | length > 0' > /dev/null 2>&1 || { echo "No secrets found in environment $ENVIRONMENT_NAME"; exit 0; }
-          echo "Secrets found:"
-          echo "$RESPONSE" | jq -r '.secrets[].name'
+          # # Check if secrets exist and list the secret keys
+          # echo "$RESPONSE" | jq -e '.secrets | length > 0' > /dev/null 2>&1 || { echo "No secrets found in environment $ENVIRONMENT_NAME"; exit 0; }
+          # echo "Secrets found:"
+          # echo "$RESPONSE" | jq -r '.secrets[].name'
 
 
 

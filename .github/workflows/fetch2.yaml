@@ -32,7 +32,7 @@ jobs:
           # REPO: ${{ github.repository }}
           REPO: vprfile_dev
         run: |
-          echo "Fetching secrets for each environment in repository: ${{REPO}}"
+          echo "Fetching secrets for each environment in repository: ${REPO}"
           for ENVIRONMENT in ${{ steps.list_environments.outputs.environments }}
           do
             echo "Environment: $ENVIRONMENT"

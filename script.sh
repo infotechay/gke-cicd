@@ -1,3 +1,13 @@
+
+
+
 #!/bin/bash
-curl -X GET -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+
+# Get the token from the first argument
+token="$1"
+
+# Echo the token for debugging (optional)
+echo "The token is: $token"
+
+curl -X GET -H "Authorization: token $token \
           https://api.github.com/repos/infotechay/gke-cicd/environments/mysecret1/secrets

@@ -2,7 +2,7 @@ name: List Environments and Their Secrets
 on:
   push:
     branches:
-      - main
+      - main123
   workflow_dispatch: # Allows manual triggering
 
 jobs:

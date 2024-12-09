@@ -3,12 +3,10 @@ provider "github" {
   token = var.github_token
   owner = var.github_owner
 }
-
 # Read the content of the secrets file
 data "local_file" "secrets_file" {
   filename = "secrets.txt"
 }
-
 # Split the file content into key-value pairs (assuming the format KEY=VALUE)
 locals {
   secrets = {
@@ -17,7 +15,6 @@ locals {
     if length(trimspace(line)) > 0 && contains(line, "=")
   }
 }
-
 # Loop over each secret and create it in the target repository environment
 resource "github_actions_environment_secret" "secret" {
   for_each = local.secrets

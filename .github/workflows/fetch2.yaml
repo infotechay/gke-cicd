@@ -29,20 +29,20 @@ jobs:
 
 
 
-      - name: List Secrets for Each Environment
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # REPO: ${{ github.repository }}
-          REPO: vprfile_dev
-        run: |
-          echo "Fetching secrets for each environment in repository: $REPO "
-          for ENVIRONMENT in ${{ steps.list_environments.outputs.environments }}
-          do
-            echo "Environment: $ENVIRONMENT"
-            curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-                 -H "Accept: application/vnd.github.v3+json" \
-                 "https://api.github.com/repos/infotechay/vprfile_dev/environments/$ENVIRONMENT/secrets" | jq .
-          done
+      # - name: List Secrets for Each Environment
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     # REPO: ${{ github.repository }}
+      #     REPO: vprfile_dev
+      #   run: |
+      #     echo "Fetching secrets for each environment in repository: $REPO "
+      #     for ENVIRONMENT in ${{ steps.list_environments.outputs.environments }}
+      #     do
+      #       echo "Environment: $ENVIRONMENT"
+      #       curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+      #            -H "Accept: application/vnd.github.v3+json" \
+      #            "https://api.github.com/repos/infotechay/vprfile_dev/environments/$ENVIRONMENT/secrets" | jq .
+      #     done
 
 
   # list-environment-secrets1:

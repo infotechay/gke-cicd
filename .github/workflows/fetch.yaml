@@ -126,7 +126,7 @@ jobs:
 
     # Specify the environment where the secrets are defined
     environment:
-      name: Mysecret1
+      name: mysecret1
 
     steps:
       - name: Check Out Code

@@ -117,7 +117,7 @@ name: Use and Update Environment Secrets
 on:
   push:
     branches:
-      - main
+      - main12
   workflow_dispatch:
 
 jobs:
@@ -134,7 +134,7 @@ jobs:
 
       - name: Set Secrets Dynamically
         run: |
-          echo "SECRET_LIST=CRED1 CRED2 TF_VAR_GITHUB_TOKEN" >> $GITHUB_ENV
+          echo "SECRET_LIST=TF_VAR_GITHUB_TOKEN CRED1 CRED2" >> $GITHUB_ENV
 
       - name: Process Each Secret
         env:

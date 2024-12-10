@@ -12,7 +12,6 @@ jobs:
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
-
       - name: List All Environments
         id: list_environments
         env:
@@ -25,7 +24,7 @@ jobs:
           echo "Fetching all environments for repository: ${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}"
           ENVIRONMENTS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
                             -H "Accept: application/vnd.github.v3+json" \
-                            "https://api.github.com/repos/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/environments" | jq -r '.environments[].name')
+                            "https://api.github.com/repos/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/environments")
           echo "Environments found: $ENVIRONMENTS"
    #        echo "::set-output name=environments::$ENVIRONMENTS"
           echo "$ENVIRONMENTS" > environments.txt

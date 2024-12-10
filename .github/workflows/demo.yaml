@@ -1,0 +1,56 @@
+name: Fetch and Display a Single Secret Using PAT
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment_name:
+        description: "Enter the environment name"
+        required: true
+        type: string
+      secret_key:
+        description: "Enter the secret key (e.g., CRED1)"
+        required: true
+        type: string
+      pat_token:
+        description: "Enter your Personal Access Token (PAT)"
+        required: true
+        type: string
+
+jobs:
+  display-secret:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Display Inputs
+        run: |
+          echo "Environment: ${{ github.event.inputs.environment_name }}"
+          echo "Secret Key: ${{ github.event.inputs.secret_key }}"
+
+      - name: Fetch Secret Value Using PAT
+        env:
+          PAT: ${{ github.event.inputs.pat_token }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          ENVIRONMENT_NAME: ${{ github.event.inputs.environment_name }}
+          SECRET_KEY: ${{ github.event.inputs.secret_key }}
+        run: |
+          echo "Fetching secret: $SECRET_KEY from environment: $ENVIRONMENT_NAME"
+
+          # Fetch the list of secrets for the given environment
+          SECRETS=$(curl -s -H "Authorization: Bearer $PAT" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/environments/$ENVIRONMENT_NAME/secrets")
+
+          echo "Secrets available: $SECRETS"
+
+          # Extract the value of the specified secret (PAT must have write access to the repo)
+          SECRET_VALUE=$(curl -s -H "Authorization: Bearer $PAT" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/environments/$ENVIRONMENT_NAME/secrets/$SECRET_KEY" | jq -r '.value')
+
+          if [ -n "$SECRET_VALUE" ] && [ "$SECRET_VALUE" != "null" ]; then
+            # Print the secret value with spaces
+            echo "$SECRET_KEY=$(echo $SECRET_VALUE | sed 's/./& /g')"
+          else
+            echo "Secret $SECRET_KEY not found or has no value."
+          fi

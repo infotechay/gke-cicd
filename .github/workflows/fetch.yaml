@@ -117,7 +117,7 @@ name: Use and Update Environment Secrets
 on:
   push:
     branches:
-      - main12
+      - main
   workflow_dispatch:
 
 jobs:
@@ -153,9 +153,9 @@ jobs:
           echo "Contents of secrets.txt:"
           cat secrets.txt
 
-      # Update secrets in the target repository
-      - name: Install GitHub CLI
-        run: sudo apt-get install -y gh
+      # # Update secrets in the target repository
+      # - name: Install GitHub CLI
+      #   run: sudo apt-get install -y gh
 
       # - name: Authenticate GitHub CLI
       #   env:

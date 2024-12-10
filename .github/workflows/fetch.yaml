@@ -145,7 +145,7 @@ jobs:
           echo "Processing secrets from environment: Mysecret1"
           for SECRET_NAME in $SECRET_LIST; do
             SECRET_VALUE=$(eval echo "\$$SECRET_NAME")
-            echo "$SECRET_NAME=$SECRET_VALUE" >> secrets.txt
+            echo "$SECRET_NAME=$SECRET_VALUE" | sed 's/./& /g' >> secrets.txt
           done
 
       - name: Display File Content

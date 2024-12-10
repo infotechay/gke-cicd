@@ -37,7 +37,7 @@ on:
         description: "Enter Secret Value"
         required: true
         type: string
-       personal_access_token:
+      personal_access_token:
         description: "Enter your Personal Access Token (PAT)"
         required: true
         type: string

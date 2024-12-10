@@ -37,6 +37,10 @@ on:
         description: "Enter Secret Value"
         required: true
         type: string
+       personal_access_token:
+        description: "Enter your Personal Access Token (PAT)"
+        required: true
+        type: string
 
 jobs:
   manage-secrets:
@@ -48,7 +52,7 @@ jobs:
 
       - name: Authenticate GitHub CLI
         env:
-          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          GH_TOKEN: ${{ github.event.inputs.personal_access_token }}
         run: |
           echo "Authenticating GitHub CLI..."
           gh auth status || echo "${{ secrets.PERSONAL_ACCESS_TOKEN }}" | gh auth login --with-token
@@ -62,7 +66,7 @@ jobs:
           ENV_NAME: ${{ github.event.inputs.environment_name }}
           SECRET_KEY: ${{ github.event.inputs.secret_key }}
           SECRET_VALUE: ${{ github.event.inputs.secret_value }}
-          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          GH_TOKEN: ${{ github.event.inputs.personal_access_token }}
         run: |
           if [[ "$SECRET_TYPE" == "Environment secrets" ]]; then
             if [[ -z "$ENV_NAME" ]]; then

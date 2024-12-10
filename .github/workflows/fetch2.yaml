@@ -32,7 +32,7 @@ jobs:
 
       - name: List Secrets for Each Environment
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           REPO_OWNER: infotechay
           REPO_NAME: gke-cicd
         run: |

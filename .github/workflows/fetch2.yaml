@@ -36,7 +36,7 @@ jobs:
           REPO_OWNER: infotechay
           REPO_NAME: gke-cicd
         run: |
-          while IFS= read -r ENVIRONMENT; do
+          # while IFS= read -r ENVIRONMENT; do
             echo "Fetching secrets for environment: $ENVIRONMENT"
             DECREDS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
                             -H "Accept: application/vnd.github.v3+json" \

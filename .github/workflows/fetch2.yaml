@@ -16,6 +16,8 @@ jobs:
         id: list_environments
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_OWNER: infotechay
+          REPO_NAME: gke-cicd
           # REPO: ${{ github.repository }}
           REPO: gke-cicd
         run: |

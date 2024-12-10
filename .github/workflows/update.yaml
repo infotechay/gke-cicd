@@ -1,0 +1,116 @@
+name: Manage Secrets
+
+on:
+  workflow_dispatch:
+
+jobs:
+  manage-secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Manage Secrets
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const core = require('@actions/core');
+            const github = require('@actions/github');
+
+            // Get user inputs
+            const secretType = core.getInput('secret_type');
+            const action = core.getInput('action');
+            const owner = core.getInput('owner');
+            const repo = core.getInput('repo');
+            const pat = core.getInput('pat');
+
+            // Authenticate with GitHub API
+            const token = pat;
+            const octokit = github.getOctokit(token);
+
+            // Handle secret type and action
+            if (secretType === 'environment') {
+              if (action === 'add') {
+                // Add environment secret
+                octokit.rest.actions.createEnvironmentVariable({
+                  owner,
+                  repo,
+                  name: core.getInput('key'),
+                  value: core.getInput('value')
+                })
+                .then(result => {
+                  core.info(`Environment secret added successfully: ${result.data.name}`);
+                })
+                .catch(error => {
+                  core.setFailed(`Error adding environment secret: ${error.message}`);
+                });
+              } else if (action === 'modify') {
+                // Modify environment secret
+                octokit.rest.actions.updateEnvironmentVariable({
+                  owner,
+                  repo,
+                  name: core.getInput('key'),
+                  value: core.getInput('value')
+                })
+                .then(result => {
+                  core.info(`Environment secret modified successfully: ${result.data.name}`);
+                })
+                .catch(error => {
+                  core.setFailed(`Error modifying environment secret: ${error.message}`);
+                });
+              }
+            } else if (secretType === 'repository') {
+              if (action === 'add') {
+                // Add repository secret
+                octokit.rest.actions.createRepositorySecret({
+                  owner,
+                  repo,
+                  secret_name: core.getInput('key'),
+                  secret_value: core.getInput('value')
+                })
+                .then(result => {
+                  core.info(`Repository secret added successfully: ${result.data.name}`);
+                })
+                .catch(error => {
+                  core.setFailed(`Error adding repository secret: ${error.message}`);
+                });
+              } else if (action === 'modify') {
+                // Modify repository secret
+                octokit.rest.actions.updateRepositorySecret({
+                  owner,
+                  repo,
+                  secret_name: core.getInput('key'),
+                  secret_value: core.getInput('value')
+                })
+                .then(result => {
+                  core.info(`Repository secret modified successfully: ${result.data.name}`);
+                })
+                .catch(error => {
+                  core.setFailed(`Error modifying repository secret: ${error.message}`);
+                });
+              }
+            } else {
+              core.setFailed('Invalid secret type');
+            }
+          inputs:
+            secret_type:
+              description: Type of secret to manage (environment or repository)
+              required: true
+            action:
+              description: Action to perform (add or modify)
+              required: true
+            owner:
+              description: Repository owner
+              required: true
+            repo:
+              description: Repository name
+              required: true
+            pat:
+              description: Personal Access Token
+              required: true
+            key:
+              description: Secret key
+              required: true
+            value:
+              description: Secret value
+              required: true

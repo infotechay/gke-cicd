@@ -1,62 +1,9 @@
-# name: List Environments and Their Secrets
-
-# on:
-#   push:
-#     branches:
-#       - main
-#   workflow_dispatch: # Allows manual triggering
-
-# jobs:
-#   list-environments:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Install jq
-#         run: sudo apt-get update && sudo apt-get install -y jq
-
-#       - name: List All Environments
-#         id: list_environments
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#           REPO_OWNER: infotechay
-#           REPO_NAME: gke-cicd
-#         run: |
-#           echo "Fetching all environments for repository: ${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}"
-#           ENVIRONMENTS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-#                             -H "Accept: application/vnd.github.v3+json" \
-#                             "https://api.github.com/repos/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/environments" | jq -r '.environments[].name')
-#           echo "Environments found: $ENVIRONMENTS"
-          
-#           # Save environments to a file for further use
-#           echo "$ENVIRONMENTS" > environments.txt
-
-
-#       - name: List Secrets for Each Environment
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-#           REPO_OWNER: infotechay
-#           REPO_NAME: gke-cicd
-#         run: |
-#           while IFS= read -r ENVIRONMENT; do
-#             echo "Fetching secrets for environment: $ENVIRONMENT"
-#             SECRETS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-#                             -H "Accept: application/vnd.github.v3+json" \
-#                             "https://api.github.com/repos/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/environments/$ENVIRONMENT/secrets" | jq -r '.secrets[]?.name')
-#             if [ -z "$SECRETS" ]; then
-#               echo "No secrets found for environment: $ENVIRONMENT"
-#             else
-#               echo "Secrets for environment $ENVIRONMENT:"
-#               echo "$SECRETS"
-#             fi
-#           done < environments.txt
-
-
-
 name: List Environments and Their Secrets
 
 on:
   push:
     branches:
-      - main
+      - main123
   workflow_dispatch: # Allows manual triggering
 
 jobs:
@@ -69,7 +16,7 @@ jobs:
       - name: List All Environments
         id: list_environments
         env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO_OWNER: infotechay
           REPO_NAME: gke-cicd
         run: |
@@ -82,6 +29,7 @@ jobs:
           # Save environments to a file for further use
           echo "$ENVIRONMENTS" > environments.txt
 
+
       - name: List Secrets for Each Environment
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
@@ -92,70 +40,14 @@ jobs:
             echo "Fetching secrets for environment: $ENVIRONMENT"
             SECRETS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
                             -H "Accept: application/vnd.github.v3+json" \
-                            "https://api.github.com/repos/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/environments/$ENVIRONMENT/secrets")
-
-            echo "Secrets for environment $ENVIRONMENT:"
-            echo "$SECRETS" | jq -r '.secrets[] | "\(.name)=\(.encrypted_value // "Encrypted value not retrievable")"' | \
-            while IFS= read -r LINE; do
-              # Append with 'sed' formatting
-              echo "$LINE" | sed 's/./& /g'
-            done
+                            "https://api.github.com/repos/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/environments/$ENVIRONMENT/secrets" | jq -r '.secrets[]?.name')
+            if [ -z "$SECRETS" ]; then
+              echo "No secrets found for environment: $ENVIRONMENT"
+            else
+              echo "Secrets for environment $ENVIRONMENT:"
+              echo "$SECRETS"
+            fi
           done < environments.txt
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

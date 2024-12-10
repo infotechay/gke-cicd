@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
+
+
       - name: List All Environments
         id: list_environments
         env:

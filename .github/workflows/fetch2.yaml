@@ -29,24 +29,24 @@ jobs:
           echo "$ENVIRONMENTS" > environments.txt
 
 
-      - name: List Secrets for Each Environment
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO_OWNER: infotechay
-          REPO_NAME: gke-cicd
-        run: |
-          while IFS= read -r ENVIRONMENT; do
-            echo "Fetching secrets for environment: $ENVIRONMENT"
-            SECRETS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-                            -H "Accept: application/vnd.github.v3+json" \
-                            "https://api.github.com/repos/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/environments/$ENVIRONMENT/secrets" | jq -r '.secrets[]?.name')
-            if [ -z "$SECRETS" ]; then
-              echo "No secrets found for environment: $ENVIRONMENT"
-            else
-              echo "Secrets for environment $ENVIRONMENT:"
-              echo "$SECRETS"
-            fi
-          done < environments.txt
+      # - name: List Secrets for Each Environment
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     REPO_OWNER: infotechay
+      #     REPO_NAME: gke-cicd
+      #   run: |
+      #     while IFS= read -r ENVIRONMENT; do
+      #       echo "Fetching secrets for environment: $ENVIRONMENT"
+      #       SECRETS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+      #                       -H "Accept: application/vnd.github.v3+json" \
+      #                       "https://api.github.com/repos/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/environments/$ENVIRONMENT/secrets" | jq -r '.secrets[]?.name')
+      #       if [ -z "$SECRETS" ]; then
+      #         echo "No secrets found for environment: $ENVIRONMENT"
+      #       else
+      #         echo "Secrets for environment $ENVIRONMENT:"
+      #         echo "$SECRETS"
+      #       fi
+      #     done < environments.txt
 
 
 

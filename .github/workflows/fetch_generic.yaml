@@ -1,0 +1,73 @@
+name: Fetch Repository Details
+
+on:
+  workflow_dispatch:
+    inputs:
+      owner:
+        description: "Enter the repository owner name"
+        required: true
+        default: "infotechay"
+      repository:
+        description: "Enter the repository name"
+        required: true
+        default: "gke-cicd"
+      token:
+        description: "Enter your personal access token (PAT)"
+        required: true
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  fetch-info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Variables
+        run: |
+          echo "OWNER=${{ github.event.inputs.owner }}" >> $GITHUB_ENV
+          echo "REPO=${{ github.event.inputs.repository }}" >> $GITHUB_ENV
+          echo "TOKEN=${{ github.event.inputs.token }}" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v3
+
+      - name: Fetch Repository Branches
+        run: |
+          curl -X GET -H "Authorization: token $TOKEN" \
+            https://api.github.com/repos/$OWNER/$REPO/branches \
+            > branches.json
+          echo "Printing branches.json"
+          cat branches.json
+
+      - name: Fetch Repository Protection Rules
+        run: |
+          curl -X GET -H "Authorization: token $TOKEN" \
+            https://api.github.com/repos/$OWNER/$REPO/branches/main/protection \
+            > protection_rules.json
+          echo "Printing protection_rules.json"
+          cat protection_rules.json
+
+      - name: Fetch Repository Collaborators
+        run: |
+          curl -X GET -H "Authorization: token $TOKEN" \
+            https://api.github.com/repos/$OWNER/$REPO/collaborators \
+            > collaborators.json
+          echo "Printing collaborators.json"
+          cat collaborators.json
+
+      - name: Fetch Repository Teams
+        run: |
+          curl -X GET -H "Authorization: token $TOKEN" \
+            https://api.github.com/repos/$OWNER/$REPO/teams \
+            > teams.json
+          echo "Printing teams.json"
+          cat teams.json
+
+      - name: List All Environments
+        run: |
+          echo "Fetching all environments for repository: $REPO"
+          ENVIRONMENTS=$(curl -s -H "Authorization: token $TOKEN" \
+                            -H "Accept: application/vnd.github.v3+json" \
+                            "https://api.github.com/repos/$OWNER/$REPO/environments" | jq -r '.environments[].name')
+          echo "Environments: $ENVIRONMENTS"
+
+        

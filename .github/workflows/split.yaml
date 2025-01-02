@@ -1,19 +1,14 @@
-name: Fetch Repository Details-generic
+name: Fetch Repository Details
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
-      owner:
-        description: "Enter the repository owner name"
-        required: true
-        default: "infotechay"
-      repository:
-        description: "Enter the repository name"
-        required: true
-        default: "gke-cicd"
-      token:
-        description: "Enter your personal access token (PAT)"
-        required: true
+      pat_token:
+        description: "Enter your Personal Access Token (PAT) for the second job"
+        required: false
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -24,15 +19,14 @@ jobs:
     steps:
       - name: Set Variables
         run: |
-          echo "OWNER=${{ github.event.inputs.owner }}" >> $GITHUB_ENV
-          echo "REPO=${{ github.event.inputs.repository }}" >> $GITHUB_ENV
-          echo "TOKEN=${{ github.event.inputs.token }}" >> $GITHUB_ENV
+          echo "OWNER=infotechay" >> $GITHUB_ENV
+          echo "REPO=gke-cicd" >> $GITHUB_ENV
 
       - uses: actions/checkout@v3
 
       - name: Fetch Repository Branches
         run: |
-          curl -X GET -H "Authorization: token $TOKEN" \
+          curl -X GET -H "Authorization: token $GITHUB_TOKEN" \
             https://api.github.com/repos/$OWNER/$REPO/branches \
             > branches.json
           echo "Printing branches.json"
@@ -40,7 +34,7 @@ jobs:
 
       - name: Fetch Repository Protection Rules
         run: |
-          curl -X GET -H "Authorization: token $TOKEN" \
+          curl -X GET -H "Authorization: token $GITHUB_TOKEN" \
             https://api.github.com/repos/$OWNER/$REPO/branches/main/protection \
             > protection_rules.json
           echo "Printing protection_rules.json"
@@ -48,7 +42,7 @@ jobs:
 
       - name: Fetch Repository Collaborators
         run: |
-          curl -X GET -H "Authorization: token $TOKEN" \
+          curl -X GET -H "Authorization: token $GITHUB_TOKEN" \
             https://api.github.com/repos/$OWNER/$REPO/collaborators \
             > collaborators.json
           echo "Printing collaborators.json"
@@ -56,18 +50,32 @@ jobs:
 
       - name: Fetch Repository Teams
         run: |
-          curl -X GET -H "Authorization: token $TOKEN" \
+          curl -X GET -H "Authorization: token $GITHUB_TOKEN" \
             https://api.github.com/repos/$OWNER/$REPO/teams \
             > teams.json
           echo "Printing teams.json"
           cat teams.json
 
+  list-environments:
+    runs-on: ubuntu-latest
+    needs: fetch-info
+    steps:
+      - name: Get User Input for PAT
+        if: ${{ github.event.inputs.pat_token == null }}
+        run: echo "PAT Token is missing! Please trigger manually with the PAT token."
+
       - name: List All Environments
+        env:
+          PAT_TOKEN: ${{ github.event.inputs.pat_token }}
+          OWNER: infotechay
+          REPO: gke-cicd
         run: |
+          if [ -z "$PAT_TOKEN" ]; then
+            echo "PAT Token is not provided. Exiting..."
+            exit 1
+          fi
           echo "Fetching all environments for repository: $REPO"
-          ENVIRONMENTS=$(curl -s -H "Authorization: token $TOKEN" \
+          ENVIRONMENTS=$(curl -s -H "Authorization: token $PAT_TOKEN" \
                             -H "Accept: application/vnd.github.v3+json" \
                             "https://api.github.com/repos/$OWNER/$REPO/environments" | jq -r '.environments[].name')
           echo "Environments: $ENVIRONMENTS"
-
-        

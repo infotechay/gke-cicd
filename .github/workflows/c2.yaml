@@ -10,7 +10,7 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - uses: actions/cache@2
+      - uses: actions/cache@v2
         with:
           days-before-issue-stale: 200
           days-before-issue-close: 5

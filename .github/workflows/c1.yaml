@@ -22,7 +22,7 @@ jobs:
     steps:
     - name: Update the ${{ env.TAG_NAME }} tag
       id: update-major-tag
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         source-tag: ${{ env.TAG_NAME }}
         slack-webhook: ${{ secrets.SLACK_WEBHOOK }}

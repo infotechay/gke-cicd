@@ -1,0 +1,59 @@
+name: Deploy Hello World to GKE
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  CLUSTER_NAME: my-gke-cluster  # Name of your existing cluster
+  ZONE: us-central1-a           # Zone of your existing cluster
+  IMAGE: gcr.io/google-samples/hello-app:1.0  # Your container image
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          install_components: 'gke-gcloud-auth-plugin'  # Fixes kubectl auth
+
+      - name: Configure kubectl for existing cluster
+        run: |
+          gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} \
+            --zone ${{ env.ZONE }} \
+            --project ${{ env.GCP_PROJECT_ID }}
+
+      - name: Deploy Hello World App
+        run: |
+          # Create deployment if not exists, else update
+          kubectl create deployment hello-world --image=${{ env.IMAGE }} --dry-run=client -o yaml | kubectl apply -f -
+          
+          # Create or update LoadBalancer service
+          kubectl expose deployment hello-world \
+            --type=LoadBalancer \
+            --port 80 \
+            --target-port 8080 \
+            --name hello-world-service \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Get LoadBalancer IP
+        run: |
+          IP=$(kubectl get service hello-world-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          echo "LoadBalancer IP: $IP"
+          echo "✅ Access your app at http://$IP or update DNS (nustapaisa.site) to this IP!"

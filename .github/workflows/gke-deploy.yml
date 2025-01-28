@@ -32,7 +32,8 @@ jobs:
             --zone ${{ env.ZONE }} \
             --num-nodes 2 \
             --machine-type e2-medium \
-            --enable-ip-alias
+            --enable-ip-alias \
+            --project ${{ env.GCP_PROJECT_ID }}
 
       - name: Configure kubectl
         run: |

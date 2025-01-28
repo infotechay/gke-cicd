@@ -32,13 +32,13 @@ jobs:
         with:
           project_id: ${{ env.GCP_PROJECT_ID }}
 
-      - name: Create GKE Cluster
-        run: |
-          gcloud container clusters create ${{ env.CLUSTER_NAME }} \
-            --zone ${{ env.ZONE }} \
-            --num-nodes 2 \
-            --machine-type e2-medium \
-            --enable-ip-alias
+      # - name: Create GKE Cluster
+      #   run: |
+      #     gcloud container clusters create ${{ env.CLUSTER_NAME }} \
+      #       --zone ${{ env.ZONE }} \
+      #       --num-nodes 2 \
+      #       --machine-type e2-medium \
+      #       --enable-ip-alias
 
       - name: Configure kubectl with auth plugin
         run: |

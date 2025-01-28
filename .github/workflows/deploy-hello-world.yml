@@ -9,7 +9,7 @@ env:
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   CLUSTER_NAME: my-gke-cluster  # Name of your existing cluster
   ZONE: us-central1-a           # Zone of your existing cluster
-  IMAGE: gcr.io/google-samples/hello-app:1.1  # Your container image
+  IMAGE: gcr.io/google-samples/hello-app:1.0  # Your container image
 
 jobs:
   deploy:

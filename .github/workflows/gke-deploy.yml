@@ -54,3 +54,4 @@ jobs:
           IP=$(kubectl get service hello-world -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
           echo "LoadBalancer IP: $IP"
           echo "✅ Manually update your DNS provider to point 'nustapaisa.site' to this IP!"
+          

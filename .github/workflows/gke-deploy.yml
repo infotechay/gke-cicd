@@ -19,6 +19,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Debug Service Account Key
+        run: |
+          echo "Service Account Key:"
+          echo "${{ secrets.GCP_SA_KEY }}"
+
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
@@ -32,8 +37,7 @@ jobs:
             --zone ${{ env.ZONE }} \
             --num-nodes 2 \
             --machine-type e2-medium \
-            --enable-ip-alias \
-            --project ${{ env.GCP_PROJECT_ID }}
+            --enable-ip-alias
 
       - name: Configure kubectl
         run: |
@@ -54,4 +58,65 @@ jobs:
           IP=$(kubectl get service hello-world -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
           echo "LoadBalancer IP: $IP"
           echo "✅ Manually update your DNS provider to point 'nustapaisa.site' to this IP!"
+
+
+
+
+
+# name: Deploy to GKE
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# env:
+#   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+#   GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+#   CLUSTER_NAME: my-gke-cluster
+#   ZONE: us-central1-a
+#   IMAGE: gcr.io/google-samples/hello-app:1.0
+
+# jobs:
+#   setup-deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Google Cloud SDK
+#         uses: google-github-actions/setup-gcloud@v1
+#         with:
+#           project_id: ${{ env.GCP_PROJECT_ID }}
+#           service_account_key: ${{ env.GCP_SA_KEY }}
+#           export_default_credentials: true
+
+#       - name: Create GKE Cluster
+#         run: |
+#           gcloud container clusters create ${{ env.CLUSTER_NAME }} \
+#             --zone ${{ env.ZONE }} \
+#             --num-nodes 2 \
+#             --machine-type e2-medium \
+#             --enable-ip-alias \
+#             --project ${{ env.GCP_PROJECT_ID }}
+
+#       - name: Configure kubectl
+#         run: |
+#           gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} \
+#             --zone ${{ env.ZONE }} \
+#             --project ${{ env.GCP_PROJECT_ID }}
+
+#       - name: Deploy Hello World App
+#         run: |
+#           kubectl create deployment hello-world --image=${{ env.IMAGE }}
+#           kubectl expose deployment hello-world \
+#             --type=LoadBalancer \
+#             --port 80 \
+#             --target-port 8080
+
+#       - name: Get LoadBalancer IP
+#         run: |
+#           IP=$(kubectl get service hello-world -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+#           echo "LoadBalancer IP: $IP"
+#           echo "✅ Manually update your DNS provider to point 'nustapaisa.site' to this IP!"
           

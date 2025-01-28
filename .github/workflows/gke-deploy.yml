@@ -3,14 +3,14 @@ name: Deploy to GKE
 on:
   push:
     branches:
-      - main  # Trigger on push to the main branch
+      - main
 
 env:
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
   CLUSTER_NAME: my-gke-cluster
-  ZONE: us-central1-a  # Change to your preferred zone
-  IMAGE: gcr.io/google-samples/hello-app:1.0  # Replace with your container image
+  ZONE: us-central1-a
+  IMAGE: gcr.io/google-samples/hello-app:1.0
 
 jobs:
   setup-deploy:

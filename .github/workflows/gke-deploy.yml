@@ -40,11 +40,14 @@ jobs:
             --machine-type e2-medium \
             --enable-ip-alias
 
-      - name: Configure kubectl
+      - name: Configure kubectl with auth plugin
         run: |
           gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} \
             --zone ${{ env.ZONE }} \
             --project ${{ env.GCP_PROJECT_ID }}
+          
+          # Ensure kubectl uses the auth plugin
+          kubectl config use-context gke_${GCP_PROJECT_ID}_${ZONE}_${CLUSTER_NAME}
 
       - name: Deploy Hello World App
         run: |
@@ -58,4 +61,4 @@ jobs:
         run: |
           IP=$(kubectl get service hello-world -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
           echo "LoadBalancer IP: $IP"
-          echo "✅ Update your DNS (nustapaisa.site) to point to this IP!"
+          echo "✅ Update DNS (nustapaisa.site) to point to this IP!"

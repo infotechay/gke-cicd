@@ -1,0 +1,110 @@
+name: Deploy to GKE with Ingress
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  CLUSTER_NAME: my-gke-cluster
+  ZONE: us-central1-a
+  IMAGE: gcr.io/google-samples/hello-app:1.0
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Google Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v1'
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+
+      - name: Configure kubectl with auth plugin
+        run: |
+          gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} \
+            --zone ${{ env.ZONE }} \
+            --project ${{ env.GCP_PROJECT_ID }}
+          
+          kubectl config use-context gke_${GCP_PROJECT_ID}_${ZONE}_${CLUSTER_NAME}
+
+      - name: Deploy Application Resources
+        run: |
+          # Apply Deployment
+          kubectl apply -f - <<EOF
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: hello-world
+          spec:
+            replicas: 2
+            selector:
+              matchLabels:
+                app: hello-world
+            template:
+              metadata:
+                labels:
+                  app: hello-world
+              spec:
+                containers:
+                - name: hello-app
+                  image: ${{ env.IMAGE }}
+                  ports:
+                  - containerPort: 8080
+          EOF
+
+          # Apply ClusterIP Service
+          kubectl apply -f - <<EOF
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: hello-world-service
+          spec:
+            selector:
+              app: hello-world
+            ports:
+              - protocol: TCP
+                port: 80
+                targetPort: 8080
+            type: ClusterIP
+          EOF
+
+          # Apply Ingress
+          kubectl apply -f - <<EOF
+          apiVersion: networking.k8s.io/v1
+          kind: Ingress
+          metadata:
+            name: hello-world-ingress
+            annotations:
+              kubernetes.io/ingress.class: "gce" # For GKE Ingress
+          spec:
+            rules:
+            - http:
+                paths:
+                - path: /*
+                  pathType: ImplementationSpecific
+                  backend:
+                    service:
+                      name: hello-world-service
+                      port:
+                        number: 80
+          EOF
+
+      - name: Get Ingress IP
+        run: |
+          echo "Waiting for Ingress to be created..."
+          sleep 30  # Give some time for IP allocation
+          kubectl get ingress hello-world-ingress -o jsonpath='{.status.loadBalancer.ingress[0].ip}' | awk '{print "Ingress IP: " $0}'
+          echo "✅ Update DNS (nustapaisa.site) to point to this IP!"

@@ -1,17 +1,17 @@
-# Use a lightweight base image
-FROM gcr.io/distroless/base-debian10
+# Use an official Node.js runtime as a parent image
+FROM node:20-slim
 
-# Set working directory
+# Set working directory inside the container
 WORKDIR /app
 
-# Copy application files (assuming a Node.js app)
-COPY server.js package.json /app/
+# Copy application files
+COPY package.json server.js /app/
 
 # Install dependencies
-RUN apt-get update && apt-get install -y nodejs npm && npm install
+RUN npm install
 
-# Expose application port
+# Expose the application port
 EXPOSE 8080
 
-# Start the application
+# Command to run the application
 CMD ["node", "server.js"]

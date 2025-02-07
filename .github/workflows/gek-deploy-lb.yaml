@@ -32,6 +32,22 @@ jobs:
         with:
           project_id: ${{ env.GCP_PROJECT_ID }}
 
+      ##Image Build
+      - name: Configure Docker for Google Artifact Registry
+        run: |
+          gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      - name: Build and Push Docker Image
+        run: |
+          IMAGE_NAME="us-central1-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/my-repo/hello-app:latest"
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
+
+      # - name: Deploy to GKE
+      #   run: |
+      #     kubectl set image deployment/hello-world hello-app=$IMAGE_NAME
+##
+
       - name: Configure kubectl with auth plugin
         run: |
           gcloud components install gke-gcloud-auth-plugin --quiet
@@ -59,7 +75,7 @@ jobs:
               spec:
                 containers:
                 - name: hello-app
-                  image: ${{ env.IMAGE }}
+                  image: us-central1-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/my-repo/hello-app:latest
                   ports:
                   - containerPort: 8080
           EOF

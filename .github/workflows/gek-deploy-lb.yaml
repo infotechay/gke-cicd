@@ -34,11 +34,10 @@ jobs:
 
       - name: Configure kubectl with auth plugin
         run: |
+          gcloud components install gke-gcloud-auth-plugin --quiet
           gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} \
-            --zone ${{ env.ZONE }} \
-            --project ${{ env.GCP_PROJECT_ID }}
-          
-          kubectl config use-context gke_${GCP_PROJECT_ID}_${ZONE}_${CLUSTER_NAME}
+          --zone ${{ env.ZONE }} \
+          --project ${{ env.GCP_PROJECT_ID }}
 
       - name: Deploy Application Resources
         run: |

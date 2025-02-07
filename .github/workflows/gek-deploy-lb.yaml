@@ -79,7 +79,7 @@ jobs:
               spec:
                 containers:
                 - name: hello-app
-                  image: us-central1-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/my-repo/hello-app:${{ env.IMAGE_NAME }}
+                  image: ${{ env.IMAGE_NAME }}
                   ports:
                   - containerPort: 8080
           EOF

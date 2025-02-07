@@ -39,7 +39,7 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          IMAGE_NAME="us-central1-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/my-repo/hello-app:latest"
+          IMAGE_NAME="us-central1-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/my-repo/hello-app:$IMAGE_TAG"
           docker build -t $IMAGE_NAME .
           docker push $IMAGE_NAME
 
@@ -75,7 +75,7 @@ jobs:
               spec:
                 containers:
                 - name: hello-app
-                  image: us-central1-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/my-repo/hello-app:latest
+                  image: us-central1-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/my-repo/hello-app:${{ github.sha }}
                   ports:
                   - containerPort: 8080
           EOF

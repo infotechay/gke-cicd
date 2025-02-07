@@ -90,7 +90,8 @@ jobs:
               kubernetes.io/ingress.class: "gce" # For GKE Ingress
           spec:
             rules:
-            - http:
+            - host: nustapaisa.site
+              http:
                 paths:
                 - path: /*
                   pathType: ImplementationSpecific

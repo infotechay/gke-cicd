@@ -1,4 +1,4 @@
-name: Deploy to GKE with Ingress
+name: Deploy to GKE with Ingress 
 
 on:
   push:

@@ -1,0 +1,32 @@
+name: URL Redirect Test
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  url_check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'  # Adjust Python version if needed
+
+      - name: Install dependencies
+        run: pip install requests pandas openpyxl
+
+      - name: Run URL test script
+        run: python url_test.py source_path.xlsx
+
+      - name: Upload result file
+        uses: actions/upload-artifact@v4
+        with:
+          name: redirect-results
+          path: redirect_results.xlsx
